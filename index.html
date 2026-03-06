@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FCT – Confidential Document</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+}
+
+.header {
+    background: #fff;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border-bottom: 2px solid #ccc;
+}
+
+.header img {
+    height: 40px;
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.login-box {
+    max-width: 400px;
+    margin: 80px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    font-size: 16px;
+}
+
+button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.error {
+    color: red;
+    margin-top: 10px;
+}
+
+.viewer {
+    display: none;
+    height: calc(100vh - 60px);
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.watermark {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-30deg);
+    font-size: 48px;
+    color: rgba(200,0,0,0.15);
+    pointer-events: none;
+    z-index: 9999;
+    white-space: nowrap;
+}
+</style>
+
+</head>
+<body oncontextmenu="return false">
+
+<div class="header">
+    <img src="logo.png" alt="FCT Logo">
+    <h2>Fine Components and Tools Pvt. Ltd.</h2>
+</div>
+
+<div class="login-box" id="loginBox">
+    <h3>Welcome to FCT</h3>
+    <p>Kindly enter the password</p>
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="checkPassword()">Submit</button>
+    <div class="error" id="error"></div>
+</div>
+
+<div class="viewer" id="viewer">
+    <div class="watermark">CONFIDENTIAL – FCT</div>
+    <iframe id="pdfFrame"></iframe>
+</div>
+
+<script>
+const CORRECT_PASSWORD = "fctfct"; // change if needed
+
+function getPdfFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("file");
+}
+
+function checkPassword() {
+    const entered = document.getElementById("password").value;
+    const pdfFile = getPdfFromURL();
+
+    if (!pdfFile) {
+        document.getElementById("error").innerText = "PDF file not specified.";
+        return;
+    }
+
+    if (entered === CORRECT_PASSWORD) {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("viewer").style.display = "block";
+
+        // Disable download using PDF viewer parameters
+        document.getElementById("pdfFrame").src =
+            pdfFile + "#toolbar=0&navpanes=0&scrollbar=0";
+    } else {
+        document.getElementById("error").innerText = "Incorrect password";
+    }
+}
+
+// Disable common shortcuts
+document.addEventListener("keydown", function (e) {
+    if (
+        e.ctrlKey &&
+        (e.key === "s" || e.key === "p" || e.key === "u")
+    ) {
+        e.preventDefault();
+    }
+});
+</script>
+
+</body>
+</html>
